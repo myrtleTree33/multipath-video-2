@@ -1,5 +1,9 @@
 /**
  * @author me <at> joeltong <dot> org
+ *
+ * Available at https://github.com/myrtleTree33/multipath-video-2
+ * Using gulp generator at https://github.com/yeoman/generator-gulp-webapp
+ *
  */
 
 console.log('\'Allo \'Allo!');
@@ -50,8 +54,17 @@ function onPlayerReady(event) {
 function onPlayerStateChange(event) {
   if (event.data == YT.PlayerState.ENDED) {
     console.log('Video ended!');
+
+    // check if destination is reached
+    if (currNode.goto.length === 0) {
+      // alert('path complete!');
+      onPathComplete();
+      return;
+    }
+
     fullscreenDisable();
     // alert('video ended!');
+
   } else {
     console.log(event.data)
   }
@@ -63,7 +76,8 @@ function loadVideo(target, videoId) {
   fullscreenEnable();
   target.loadVideoById({
     'videoId': videoId,
-    'startSeconds': 580, // TODO Change this to 0
+    // 'startSeconds': 580, // TODO Change this to 0
+    'startSeconds': 0, // TODO Change this to 0
     'suggestedQuality': 'large'
   });
 };
@@ -80,12 +94,6 @@ function fullscreenDisable() {
   var parent = $('.prompts');
   parent.empty();
 
-  // check if destination is reached
-  if (currNode.goto.length === 0) {
-    // alert('path complete!');
-    onPathComplete();
-    return;
-  }
 
   $.each(currNode.goto, function(i, val) {
     var childContainer = $(document.createElement('div'));
@@ -108,14 +116,16 @@ function fullscreenDisable() {
   });
 }
 
-
+/**
+ * Runs when video path complete
+ * @return {None} [description]
+ */
 function onPathComplete() {
-  $('.done-container').removeClass('invisible');
-  $('.prompt-container').addClass('invisible');
+  showCompleteDiv();
 }
 
-/*
-function stopVideo() {
-  player.stopVideo();
+function showCompleteDiv() {
+  $('#player').addClass('invisible');
+  $('.prompt-container').addClass('invisible');
+  $('.done-container').removeClass('invisible');
 }
-*/
